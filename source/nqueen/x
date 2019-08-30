@@ -1,0 +1,79 @@
+Sub wer()
+    'Range("A1:AH1").Interior.Color = RGB(0, 255, 0)
+    numberOfRows = Cells(Rows.Count, 1).End(xlUp).Row
+
+    Dim COL As String
+
+    COL = "D"
+    Dim x As String
+    Dim y As String
+    Dim cx As String
+    Dim cy As String
+    Dim k As Interior
+
+
+    k = 0
+
+    For i = 1 To numberOfRows:
+        For j = i + 1 To numberOfRows:
+            cx = COL & i
+            cy = COL & j
+            x = Range(cx).Value
+            y = Range(cy).Value
+
+            If Levenshtein(x, y) <= 2 Then
+                Range(cx).Interior.Color = RGB(0, 255, 0)
+                Range(cy).Interior.Color = RGB(0, 255, 0)
+            End If
+
+            If k % 1000 = 0 Then
+              Application.Wait (Now + TimeValue("0:00:01"))
+            End If
+            k = k + 1
+        Next
+    Next
+
+
+End Sub
+
+Function Levenshtein(s1 As String, s2 As String)
+
+    Dim i As Integer
+    Dim j As Integer
+    Dim l1 As Integer
+    Dim l2 As Integer
+    Dim d() As Integer
+    Dim min1 As Integer
+    Dim min2 As Integer
+
+    l1 = Len(s1)
+    l2 = Len(s2)
+    ReDim d(l1, l2)
+    For i = 0 To l1
+        d(i, 0) = i
+    Next
+    For j = 0 To l2
+        d(0, j) = j
+    Next
+
+    For i = 1 To l1
+        For j = 1 To l2
+            If Mid(s1, i, 1) = Mid(s2, j, 1) Then
+                d(i, j) = d(i - 1, j - 1)
+            Else
+                min1 = d(i - 1, j) + 1
+                min2 = d(i, j - 1) + 1
+                If min2 < min1 Then
+                    min1 = min2
+                End If
+                min2 = d(i - 1, j - 1) + 1
+                If min2 < min1 Then
+                    min1 = min2
+                End If
+                d(i, j) = min1
+            End If
+        Next
+    Next
+    Levenshtein = d(l1, l2)
+End Function
+nd Function
